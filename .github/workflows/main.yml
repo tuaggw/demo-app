@@ -1,6 +1,16 @@
 name: Deploy
 
 on:
+  workflow_dispatch:
+    inputs:
+      appName:
+        description: 'Heroku App Name'
+        required: true
+        default: 'trust1-status-staging'
+        type: choice
+        options:
+          - trust1-status-staging
+          - trust1-status
   push:
     branches: [master]
 
@@ -12,11 +22,11 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Build, Push and Release a Docker container to Heroku
-        uses: gonuit/heroku-docker-deploy@v1.3.3 # GitHub action name (leave it as it is).
+        uses: gonuit/heroku-docker-deploy@v1.3.3
         with:
           email: ${{ secrets.HEROKU_EMAIL }}
           heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
-          heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
+          heroku_app_name: ${{ inputs.appName }}
           dockerfile_directory: ./
           dockerfile_name: Dockerfile
           process_type: web
