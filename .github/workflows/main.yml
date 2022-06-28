@@ -6,11 +6,11 @@ on:
       appName:
         description: 'Heroku App Name'
         required: true
-        default: 'trust1-status-staging'
+        default: 'trust1-status-container-stg'
         type: choice
         options:
-          - trust1-status-staging
-          - trust1-status
+          - trust1-status-container-stg
+          - trust1-status-container-prd
   push:
     branches: [master]
 
