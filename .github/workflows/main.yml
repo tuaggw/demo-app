@@ -32,7 +32,7 @@ env:
   REGION: us-central1
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
