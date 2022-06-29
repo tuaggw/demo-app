@@ -15,7 +15,7 @@ on:
     branches: [ master ]
 
 env:
-  PROJECT_ID: trust-demo-354721
+  PROJECT_ID: trust-demo-354723
   GAR_LOCATION: us-west2
   SERVICE: demo-app
   REGION: us-west2
@@ -31,7 +31,8 @@ jobs:
         id: auth
         uses: google-github-actions/auth@v0
         with:
-          credentials_json: '${{ secrets.GCP_CREDENTIALS }} '
+          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+          token_format: 'access_token'
 
       - name: Show Output
         run: 'echo << ${{ steps.auth.outputs.access_token }} >>'
