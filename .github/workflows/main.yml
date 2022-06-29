@@ -34,7 +34,7 @@ jobs:
           credentials_json: '${{ secrets.GCP_CREDENTIALS }} '
 
       - name: Show Output
-        run: echo ${{ steps.auth.outputs.access_token }}
+        run: 'echo << ${{ steps.auth.outputs.access_token }} >>'
 
       - name: Docker Auth
         id: docker-auth
