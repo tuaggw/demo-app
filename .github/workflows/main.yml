@@ -1,8 +1,18 @@
-name: Deploy
+name: Multi Substrate Deployment
 
 on:
   workflow_dispatch:
     inputs:
+      herokuDeploy:
+        type: boolean
+        description: Deploy to Heroku?
+        required: true
+        default: true
+      GCPDeploy:
+        type: boolean
+        description: Deploy to GCP?
+        required: true
+        default: false
       appName:
         description: 'Heroku App Name'
         required: true
@@ -22,49 +32,15 @@ env:
   REGION: us-central1
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-
-      - name: Google Auth
-        id: auth
-        uses: google-github-actions/auth@v0
-        with:
-          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
-          token_format: 'access_token'
-
-      - name: Docker Auth
-        id: docker-auth
-        uses: docker/login-action@v1
-        with:
-          username: 'oauth2accesstoken'
-          password: '${{ steps.auth.outputs.access_token }}'
-          registry: ${{ env.GAR_LOCATION }}-docker.pkg.dev
-
-      - name: Setup GCloud CLI
-        run: |
-          gcloud auth configure-docker ${{ env.GAR_LOCATION }}-docker.pkg.dev --quiet
-
-      - name: Build and Push Container
-        run: |
-          docker build -t "${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.SERVICE }}:${{ github.sha }}" ./
-          docker push "${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.SERVICE }}:${{ github.sha }}"
-
-      - name: Deploy to Cloud Run
-        id: deploy
-        uses: google-github-actions/deploy-cloudrun@v0
-        with:
-          service: ${{ env.SERVICE }}
-          region: ${{ env.REGION }}
-          image: ${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.SERVICE }}:${{ github.sha }}
-
-      - name: Show Output
-        run: echo ${{ steps.deploy.outputs.url }}
-
-      - name: Build, Push and Release a Docker container to Heroku
+      
+     - name: Build, Push and Release a Docker container to Heroku
         uses: gonuit/heroku-docker-deploy@v1.3.3
+        if: ${{ inputs.herokuDeploy == true }}
         with:
           email: ${{ secrets.HEROKU_EMAIL }}
           heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
@@ -72,3 +48,42 @@ jobs:
           dockerfile_directory: ./
           dockerfile_name: Dockerfile
           process_type: web
+
+      - name: Google Auth
+        id: auth
+        uses: google-github-actions/auth@v0
+        if: ${{ inputs.GCPDeploy == true }}
+        with:
+          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+          token_format: 'access_token'
+
+      - name: Docker Auth
+        uses: docker/login-action@v1
+        if: ${{ inputs.GCPDeploy == true }}
+        with:
+          username: oauth2accesstoken
+          password: ${{ steps.auth.outputs.access_token }}
+          registry: ${{ env.GAR_LOCATION }}-docker.pkg.dev
+
+      - name: Setup GCloud CLI
+        if: ${{ inputs.GCPDeploy == true }}
+        run: |
+          gcloud auth configure-docker ${{ env.GAR_LOCATION }}-docker.pkg.dev --quiet
+
+      - name: Build and Push Container
+        if: ${{ inputs.GCPDeploy == true }}
+        run: |
+          docker build -t "${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.SERVICE }}:${{ github.sha }}" ./
+          docker push "${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.SERVICE }}:${{ github.sha }}"
+
+      - name: Deploy to Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v0
+        if: ${{ inputs.GCPDeploy == true }}
+        with:
+          service: ${{ env.SERVICE }}
+          region: ${{ env.REGION }}
+          image: ${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.SERVICE }}:${{ github.sha }}
+
+      - name: Show Output
+        if: ${{ inputs.GCPDeploy == true }}
+        run: echo ${{ steps.deploy.outputs.url }}
