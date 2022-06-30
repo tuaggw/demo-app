@@ -3,16 +3,16 @@ name: Multi Substrate Deployment
 on:
   workflow_dispatch:
     inputs:
-      # herokuDeploy:
-      #   type: boolean
-      #   description: Deploy to Heroku?
-      #   required: true
-      #   default: true
-      # GCPDeploy:
-      #   type: boolean
-      #   description: Deploy to GCP?
-      #   required: true
-      #   default: false
+      herokuDeploy:
+        type: boolean
+        description: Deploy to Heroku?
+        required: true
+        default: true
+      GCPDeploy:
+        type: boolean
+        description: Deploy to GCP?
+        required: true
+        default: false
       appName:
         description: 'Heroku App Name'
         required: true
@@ -38,7 +38,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       
-     - name: Build, Push and Release a Docker container to Heroku
+      - name: Build, Push and Release a Docker container to Heroku
         uses: gonuit/heroku-docker-deploy@v1.3.3
         if: ${{ inputs.herokuDeploy == true }}
         with:
