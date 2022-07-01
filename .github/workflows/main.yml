@@ -6,16 +6,13 @@ on:
       herokuDeploy:
         type: boolean
         description: Deploy to Heroku?
-        required: true
         default: true
       GCPDeploy:
         type: boolean
         description: Deploy to GCP?
-        required: true
         default: false
       appName:
         description: 'Heroku App Name'
-        required: true
         default: 'trust1-status-container-stg'
         type: choice
         options:
@@ -52,7 +49,7 @@ jobs:
       - name: Google Auth
         id: auth
         uses: google-github-actions/auth@v0
-        if: ${{ inputs.GCPDeploy == true }}
+        if: ${{ inputs.GCPDeploy == true }} && always()
         with:
           credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
           token_format: 'access_token'
