@@ -34,6 +34,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+
+      - name: Run Tests
+
+      - uses: dorny/test-reporter@v1
+        with:
+          artifact: test-results
+          name: test-report
+          path: '*.xml'
+          reporter: jest-junit 
       
       - name: Build, Push and Release a Docker container to Heroku
         uses: gonuit/heroku-docker-deploy@v1.3.3
@@ -80,7 +89,3 @@ jobs:
           service: ${{ env.SERVICE }}
           region: ${{ env.REGION }}
           image: ${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.SERVICE }}:${{ github.sha }}
-
-      - name: Show Output
-        if: ${{ inputs.GCPDeploy == true }}
-        run: echo ${{ steps.deploy.outputs.url }}

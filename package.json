@@ -17,6 +17,7 @@
     "build": "react-scripts build",
     "serve": "node server.js",
     "test": "react-scripts test",
+    "test:ci": "jest --ci --reporters=default --reporters=jest-junit",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -37,5 +38,9 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "http://localhost:3000"
+  "proxy": "http://localhost:3000",
+  "devDependencies": {
+    "jest": "^28.1.3",
+    "jest-junit": "^14.0.0"
+  }
 }
