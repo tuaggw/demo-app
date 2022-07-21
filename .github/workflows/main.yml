@@ -43,7 +43,7 @@ jobs:
         if: success() || failure()
         with:
           name: JEST Tests
-          path: *.xml
+          path: junit.xml
           reporter: jest-junit 
       
       - name: Build, Push and Release a Docker container to Heroku
