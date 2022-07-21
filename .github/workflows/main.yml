@@ -38,11 +38,12 @@ jobs:
       - name: Run Tests
         run: yarn install && yarn test:ci
 
-      - uses: dorny/test-reporter@v1
+      - name: Test Report
+        uses: dorny/test-reporter@v1
+        if: success() || failure()
         with:
-          artifact: test-results
-          name: test-report
-          path: '*.xml'
+          name: JEST Tests
+          path: reports/jest-*.xml
           reporter: jest-junit 
       
       - name: Build, Push and Release a Docker container to Heroku
