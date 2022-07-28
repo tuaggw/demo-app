@@ -45,11 +45,10 @@ jobs:
           name: test-report
           path: junit.xml
           reporter: jest-junit
-          fail-on-error: 'false'
       
       - name: Build, Push and Release a Docker container to Heroku
         uses: gonuit/heroku-docker-deploy@v1.3.3
-        if: (success() || failure()) && ${{ inputs.herokuDeploy == true }}
+        if: ${{ inputs.herokuDeploy == true }}
         with:
           email: ${{ secrets.HEROKU_EMAIL }}
           heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
