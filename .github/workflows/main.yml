@@ -44,7 +44,8 @@ jobs:
         with:
           name: test-report
           path: junit.xml
-          reporter: jest-junit 
+          reporter: jest-junit
+          fail-on-error: 'false'
       
       - name: Build, Push and Release a Docker container to Heroku
         uses: gonuit/heroku-docker-deploy@v1.3.3
