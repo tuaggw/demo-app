@@ -42,9 +42,9 @@ jobs:
         uses: dorny/test-reporter@v1
         if: success() || failure()
         with:
-          name: test-report
+          name: JEST Tests
           path: junit.xml
-          reporter: jest-junit 
+          reporter: jest-junit
       
       - name: Build, Push and Release a Docker container to Heroku
         uses: gonuit/heroku-docker-deploy@v1.3.3
