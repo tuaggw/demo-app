@@ -48,7 +48,7 @@ jobs:
       
       - name: Build, Push and Release a Docker container to Heroku
         uses: gonuit/heroku-docker-deploy@v1.3.3
-        if: ${{ inputs.herokuDeploy == true }}
+        if: success() || failure() && ${{ inputs.herokuDeploy == true }}
         with:
           email: ${{ secrets.HEROKU_EMAIL }}
           heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
